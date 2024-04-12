@@ -12,6 +12,7 @@ exports.register = (req, res) => {
   //第一步判断前端传来的数据是否为空
   if (!reginfo.account || !reginfo.password) {
     return res.send({
+      code: 400,
       status: 1,
       message: "账号或密码不能为空",
     });
@@ -22,10 +23,12 @@ exports.register = (req, res) => {
   db.query(sql, reginfo.account, (err, results) => {
     if (results.length > 0) {
       return res.send({
+        code: 409,
         status: 1,
         message: "账号已存在",
       });
     }
+
     //第三步对用户输入的密码加密，使用加密中间件(bcrypt)
     //第一个参数为传入的密码，第二个参数为加密后的长度
     reginfo.password = bcrypt.hashSync(reginfo.password, 10);
@@ -48,14 +51,16 @@ exports.register = (req, res) => {
         //affectedRows为影响的行数
         if (results.affectedRows !== 1) {
           return res.send({
+            code: 500,
             status: 1,
-            message: "注册失败，请稍后重试",
+            message: "注册账号失败，请稍后重试",
           });
         }
         //插入成功的情况
         res.send({
+          code: 201,
           status: 1,
-          message: "注册成功",
+          message: "注册账号成功",
         });
       }
     );
@@ -65,6 +70,7 @@ exports.register = (req, res) => {
 exports.login = (req, res) => {
   // res.send("登录");
   const logininfo = req.body;
+  console.log("logininf=", logininfo);
   //第一步判断前端传来的账号是否存在
   const sql = "select * from users where account=?";
   //执行sql语句
@@ -72,7 +78,7 @@ exports.login = (req, res) => {
     //执行sql语句失败的情况，一般在数据库断开时
     if (err) return res.cc(err);
     //数据库中没有该账号的情况
-    if (results.length !== 1) return res.cc("登录失败");
+    if (results.length !== 1) return res.cc("该账号未注册，登录失败");
     //第二步对前端传来的密码解密
     const compareResult = bcrypt.compareSync(
       logininfo.password,
@@ -96,6 +102,7 @@ exports.login = (req, res) => {
     });
     //将token返回给前端
     res.send({
+      code: 201,
       results: results[0],
       status: 0,
       message: "登录成功",
