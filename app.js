@@ -58,7 +58,7 @@ app.use("/users", userRouter);
 //对不符合joi规则的情况进行报错提醒
 app.use((err, req, res, next) => {
   if (err instanceof joi.ValidationError) {
-    console.log(err);
+    console.log("1111111", err);
     return res.cc(err);
   } else {
     return res.cc(err);
