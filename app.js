@@ -43,8 +43,8 @@ const { expressjwt: jwt } = require("express-jwt");
 //     secret: jwtconfig.jwtSecretKey,
 //     algorithms: ["HS256"],
 //   }).unless({
-//     // 除了这个接口，其他都需要验证
-//     // 这里的接口是登录接口，token是在登陆之后才生成的，不需要验证
+  //     // 除了这个接口，其他都需要验证
+  //     // 这里的接口是登录接口，token是在登陆之后才生成的，不需要验证
 //     path: [/^\/api\//],
 //   })
 // );
@@ -55,6 +55,9 @@ app.use("/api", loginRouter);
 
 const userRouter = require("./router/userinfo");
 app.use("/users", userRouter);
+
+const utilsRouter = require("./router/utils");
+app.use("/utils", utilsRouter);
 //对不符合joi规则的情况进行报错提醒
 app.use((err, req, res, next) => {
   if (err instanceof joi.ValidationError) {
