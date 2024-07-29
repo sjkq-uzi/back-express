@@ -43,8 +43,8 @@ const { expressjwt: jwt } = require("express-jwt");
 //     secret: jwtconfig.jwtSecretKey,
 //     algorithms: ["HS256"],
 //   }).unless({
-  //     // 除了这个接口，其他都需要验证
-  //     // 这里的接口是登录接口，token是在登陆之后才生成的，不需要验证
+//     // 除了这个接口，其他都需要验证
+//     // 这里的接口是登录接口，token是在登陆之后才生成的，不需要验证
 //     path: [/^\/api\//],
 //   })
 // );
@@ -58,11 +58,16 @@ app.use("/users", userRouter);
 
 const utilsRouter = require("./router/utils");
 app.use("/utils", utilsRouter);
+
+const gptRouter = require("./router/gpt");
+app.use("/gpt", gptRouter);
 //对不符合joi规则的情况进行报错提醒
 app.use((err, req, res, next) => {
   if (err instanceof joi.ValidationError) {
-    console.log("1111111", err);
-    return res.cc(err);
+    return res.send({
+      status: 1,
+      message: "输入的数据不符合验证规则",
+    });
   } else {
     return res.cc(err);
   }
