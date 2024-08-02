@@ -98,7 +98,7 @@ exports.login = (req, res) => {
     };
     //设置token的过期时间
     const tokenStr = jwt.sign(user, jwtconfig.jwtSecretKey, {
-      expiresIn: "7h",
+      expiresIn: "24h",
     });
     //将token返回给前端
     res.send({
